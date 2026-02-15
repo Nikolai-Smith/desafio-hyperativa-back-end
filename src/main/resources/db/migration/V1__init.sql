@@ -1,0 +1,27 @@
+CREATE TABLE IF NOT EXISTS users (
+  id CHAR(36) PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS cards (
+  id CHAR(36) PRIMARY KEY,
+  pan_hash VARBINARY(32) NOT NULL UNIQUE,
+  pan_enc VARBINARY(255) NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS imports (
+  id CHAR(36) PRIMARY KEY,
+  original_filename VARCHAR(255) NOT NULL,
+  batch_lote VARCHAR(16) NULL,
+  declared_count INT NULL,
+  received_count INT NOT NULL,
+  inserted_count INT NOT NULL,
+  duplicate_count INT NOT NULL,
+  invalid_count INT NOT NULL,
+  status VARCHAR(16) NOT NULL,
+  started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  finished_at TIMESTAMP NULL
+);
