@@ -30,9 +30,10 @@ A API sobe em `http://localhost:8080`.
 
 ## Endpoints
 
-### Saúde (público)
-- `GET /api/v1/health` → `{"status":"ok"}`
-- `GET /actuator` / `GET /actuator/health`
+
+### Swagger / OpenAPI (público)
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 
 ### Autenticação (público)
 - `POST /api/v1/auth/login`
