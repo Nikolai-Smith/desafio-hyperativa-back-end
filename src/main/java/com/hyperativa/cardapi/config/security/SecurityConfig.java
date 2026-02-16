@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * @author nikolaismith
  */
 
+
 @Configuration
 public class SecurityConfig {
 
@@ -50,12 +51,20 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**", "/api/v1/health", "/actuator/**").permitAll()
+                .requestMatchers(
+                    "/api/v1/auth/**",
+                    "/api/v1/health",
+                    "/actuator/**",
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
-            // Log requests/responses early (no token/PAN logged)
-            .addFilterBefore(apiRequestLoggingFilter, JwtAuthenticationFilter.class)
+            // ✅ CORREÇÃO AQUI
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            // (opcional mas ok)
+            .addFilterBefore(apiRequestLoggingFilter, UsernamePasswordAuthenticationFilter.class)
             .httpBasic(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .logout(AbstractHttpConfigurer::disable)

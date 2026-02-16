@@ -37,6 +37,7 @@ public class ApiRequestLoggingFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String requestId = request.getHeader(REQUEST_ID_HEADER);
+        MDC.put("requestId", requestId);
         if (requestId == null || requestId.isBlank()) {
             requestId = UUID.randomUUID().toString();
         }
