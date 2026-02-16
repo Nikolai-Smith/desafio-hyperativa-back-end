@@ -8,11 +8,8 @@ package com.hyperativa.cardapi.service;
 import com.hyperativa.cardapi.config.security.JwtService;
 import com.hyperativa.cardapi.controller.dto.LoginRequest;
 import com.hyperativa.cardapi.controller.dto.LoginResponse;
-import com.hyperativa.cardapi.domain.entity.UserEntity;
-import com.hyperativa.cardapi.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,35 +21,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
-
-    private final UserRepository userRepository;
-    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.jwtService = jwtService;
+    public AuthService(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, JwtService jwtService) {
+        this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public LoginResponse login(LoginRequest req) {
-        String username = req.getUsername();
+        if (req == null || req.getUsername() == null || req.getPassword() == null) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
 
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    log.warn("Invalid login attempt (user not found): {}", username);
-                    return new BadCredentialsException("Invalid credentials");
-                });
+        var user = userDetailsService.loadUserByUsername(req.getUsername());
 
-        if (!passwordEncoder.matches(req.getPassword(), user.getPasswordHash())) {
-            log.warn("Invalid login attempt (wrong password): {}", username);
-            throw new BadCredentialsException("Invalid credentials");
+        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid username or password");
         }
 
         String token = jwtService.generateToken(user.getUsername());
-        log.info("User authenticated successfully: {}", username);
-
         return new LoginResponse(token);
     }
 }

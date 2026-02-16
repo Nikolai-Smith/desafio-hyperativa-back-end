@@ -5,6 +5,7 @@
 
 package com.hyperativa.cardapi.config.security;
 
+import com.hyperativa.cardapi.config.logging.ApiRequestLoggingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,15 +22,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
+    private final ApiRequestLoggingFilter apiRequestLoggingFilter;
     private final JwtAuthenticationFilter jwtFilter;
     private final RestAuthenticationEntryPoint authEntryPoint;
     private final RestAccessDeniedHandler accessDeniedHandler;
 
     public SecurityConfig(
+            ApiRequestLoggingFilter apiRequestLoggingFilter,
             JwtAuthenticationFilter jwtFilter,
             RestAuthenticationEntryPoint authEntryPoint,
             RestAccessDeniedHandler accessDeniedHandler
     ) {
+        this.apiRequestLoggingFilter = apiRequestLoggingFilter;
         this.jwtFilter = jwtFilter;
         this.authEntryPoint = authEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
@@ -49,6 +53,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**", "/api/v1/health", "/actuator/**").permitAll()
                 .anyRequest().authenticated()
             )
+            // Log requests/responses early (no token/PAN logged)
+            .addFilterBefore(apiRequestLoggingFilter, JwtAuthenticationFilter.class)
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .httpBasic(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)

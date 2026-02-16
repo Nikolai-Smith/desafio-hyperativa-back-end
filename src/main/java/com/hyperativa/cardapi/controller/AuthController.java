@@ -5,11 +5,11 @@
 
 package com.hyperativa.cardapi.controller;
 
-import com.hyperativa.cardapi.service.AuthService;
 import com.hyperativa.cardapi.controller.dto.LoginRequest;
 import com.hyperativa.cardapi.controller.dto.LoginResponse;
+import com.hyperativa.cardapi.service.AuthService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 /**
  *
@@ -26,8 +26,8 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest req) {
-        return authService.login(req);
+    @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
+        return ResponseEntity.ok(authService.login(req));
     }
 }

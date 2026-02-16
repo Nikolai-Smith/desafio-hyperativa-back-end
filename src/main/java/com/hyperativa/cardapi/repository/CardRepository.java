@@ -5,7 +5,7 @@
 
 package com.hyperativa.cardapi.repository;
 
-import com.hyperativa.cardapi.domain.entity.UserEntity;
+import com.hyperativa.cardapi.domain.entity.CardEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
@@ -14,6 +14,6 @@ import java.util.Optional;
  * @author nikolaismith
  */
 
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByUsername(String username);
+public interface CardRepository extends JpaRepository<CardEntity, String> {
+    Optional<CardEntity> findByPanHash(byte[] panHash);
 }

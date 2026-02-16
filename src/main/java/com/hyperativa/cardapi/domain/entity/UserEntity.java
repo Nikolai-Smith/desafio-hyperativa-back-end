@@ -30,12 +30,33 @@ public class UserEntity {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+    
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+    }
 
-    public Long getId() { return id; }
+    public Long getId() { 
+        return id; 
+    }
 
-    public String getUsername() { return username; }
+    public String getUsername() { 
+        return username; 
+    }
 
-    public String getPasswordHash() { return passwordHash; }
+    public String getPasswordHash() { 
+        return passwordHash; 
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getCreatedAt() { 
+        return createdAt; 
+    }
+    
+    public void setUsername(String username) { 
+        this.username = username; 
+    }
+    
+    public void setPasswordHash(String passwordHash) { 
+        this.passwordHash = passwordHash; 
+    }
 }
